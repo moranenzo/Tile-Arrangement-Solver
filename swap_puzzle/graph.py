@@ -1,12 +1,13 @@
 """
 This is the graph module. It contains a minimalistic Graph class.
 """
+import Grid from grid
 
 class Graph:
     """
-    A class representing undirected graphs as adjacency lists. 
+    A class representing undirected graphs as adjacency lists.
 
-    Attributes: 
+    Attributes:
     -----------
     nodes: NodeType
         A list of nodes. Nodes can be of any immutable type, e.g., integer, float, or string.
@@ -17,21 +18,21 @@ class Graph:
     nb_nodes: int
         The number of nodes.
     nb_edges: int
-        The number of edges. 
+        The number of edges.
     edges: list[tuple[NodeType, NodeType]]
         The list of all edges
     """
 
     def __init__(self, nodes=[]):
         """
-        Initializes the graph with a set of nodes, and no edges. 
+        Initializes the graph with a set of nodes, and no edges.
 
-        Parameters: 
+        Parameters:
         -----------
         nodes: list, optional
             A list of nodes. Default is empty.
         """
-        self.nodes = nodes 
+        self.nodes = nodes
         self.graph = dict([(n, []) for n in nodes])
         self.nb_nodes = len(nodes)
         self.nb_edges = 0
@@ -42,14 +43,14 @@ class Graph:
         Prints the graph as a list of neighbors for each node (one per line)
         """
         if not self.graph:
-            output = "The graph is empty"            
+            output = "The graph is empty"
         else:
             output = f"The graph has {self.nb_nodes} nodes and {self.nb_edges} edges.\n"
             for source, destination in self.graph.items():
                 output += f"{source}-->{destination}\n"
         return output
 
-    def __repr__(self): 
+    def __repr__(self):
         """
         Returns a representation of the graph with number of nodes and edges.
         """
@@ -57,10 +58,10 @@ class Graph:
 
     def add_edge(self, node1, node2):
         """
-        Adds an edge to the graph. Graphs are not oriented, hence an edge is added to the adjacency list of both end nodes. 
+        Adds an edge to the graph. Graphs are not oriented, hence an edge is added to the adjacency list of both end nodes.
         When adding an edge between two nodes, if one of the ones does not exist it is added to the list of nodes.
 
-        Parameters: 
+        Parameters:
         -----------
         node1: NodeType
             First end (node) of the edge
@@ -81,41 +82,79 @@ class Graph:
         self.nb_edges += 1
         self.edges.append((node1, node2))
 
-    def bfs(self, src, dst): 
+    def bfs(self, src, dst):
         """
-        Finds a shortest path from src to dst by BFS.  
+        Finds a shortest path from src to dst by BFS.
 
-        Parameters: 
+        Parameters:
         -----------
         src: NodeType
             The source node.
         dst: NodeType
             The destination node.
 
-        Output: 
+        Output:
         -------
         path: list[NodeType] | None
             The shortest path from src to dst. Returns None if dst is not reachable from src
-        """ 
-        # TODO: implement this function (and remove the line "raise NotImplementedError").
-        raise NotImplementedError
+        """
+        graph = self.graph
+
+        # détermination d'un chemin reliant src et dst
+        queue = graph[src]
+        visited = [src]
+
+        father = {}
+        for node in queue:
+            father[node] = src
+
+        while queue:
+            current = queue.pop(0)  # on prend le premier élément de la file
+            visited.append(current)  # on le visite
+
+            neighbors = graph[current]  # on isole ses voisins
+            for neighbor in neighbors:
+                if neighbor == dst:  # dans ce cas on a trouvé un chemin reliant src et dst donc pas besoin de continuer la recherche
+                    visited.append(dst)
+                    father[dst] = current
+                    queue = []  # permet de sortir de la boucle while
+
+                elif (neighbor not in visited) and (neighbor not in queue):  # si neighbor n'a pas encore été considéré
+                    queue.append(neighbor)  # on le met dans la file
+                    father[neighbor] = current
+
+        if visited[-1] != dst:  # on vérifie qu'un chemin entre src et dst existe
+            return None
+
+        # optimisation du chemin reliant src et dst à partir de visited
+        child = dst
+        father = father[dst]
+        chemin = [dst]  # on va remplir le chemin en partant de dst
+        while child != src :
+            child = father
+            father = father[child]
+            chemin = [child] + chemin
+        return chemin
+
+
+
 
     @classmethod
     def graph_from_file(cls, file_name):
         """
         Reads a text file and returns the graph as an object of the Graph class.
 
-        The file should have the following format: 
+        The file should have the following format:
             The first line of the file is 'n m'
             The next m lines have 'node1 node2'
         The nodes (node1, node2) should be named 1..n
 
-        Parameters: 
+        Parameters:
         -----------
         file_name: str
             The name of the file
 
-        Outputs: 
+        Outputs:
         -----------
         graph: Graph
             An object of the class Graph with the graph from file_name.
@@ -127,7 +166,7 @@ class Graph:
                 edge = list(map(int, file.readline().split()))
                 if len(edge) == 2:
                     node1, node2 = edge
-                    graph.add_edge(node1, node2) # will add dist=1 by default
+                    graph.add_edge(node1, node2)  # will add dist=1 by default
                 else:
                     raise Exception("Format incorrect")
         return graph
