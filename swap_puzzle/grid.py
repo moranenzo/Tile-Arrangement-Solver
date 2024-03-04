@@ -3,7 +3,7 @@ This is the grid module. It contains the Grid class and its associated methods.
 """
 import random
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from itertools import permutations  # we are going to use this feature in the function generate to create all the grids
 
 
@@ -158,9 +158,8 @@ class Grid():
             The two cells to swap. They must be in the format (i, j) where i is the line and j the
             column number of the cell.
         """
-        diff_h = abs(cell1[0]-cell2[0])
-        diff_l = abs(cell1[1]-cell2[1])
-        if (diff_h == 1 and diff_l == 0) or (diff_h == 0 and diff_l == 1):
+       
+        if str(self.authorized_swap(cell1, cell2))== "True":
             v1 = self.state[cell1[0]][cell1[1]]
             v2 = self.state[cell2[0]][cell2[1]]
             self.state[cell1[0]][cell1[1]], self.state[cell2[0]][cell2[1]] = v2, v1
