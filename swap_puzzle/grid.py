@@ -1,10 +1,10 @@
 """
 This is the grid module. It contains the Grid class and its associated methods.
 """
-
 import random
+import numpy as np
+import matplotlib as plt
 from itertools import permutations  # we are going to use this feature in the function generate to create all the grids
-
 
 
 class Grid():
@@ -22,7 +22,7 @@ class Grid():
         Note: lines are numbered 0..m and columns are numbered 0..n.
     """
 
-    def __init__(self, m, n, initial_state = []):
+    def __init__(self, m, n, initial_state=[]):
         """
         Initializes the grid.
 
@@ -86,7 +86,7 @@ class Grid():
     def generate(self):
         m = self.m
         n = self.n
-        sorted = [i for i in range(1, m*n +1)]  # Creating the list sorted
+        sorted = [i for i in range(1, m*n+1)]  # Creating the list sorted
         output = list(permutations(sorted, m*n))  # Generating all possible permutations of the sorted list
         return output
 
@@ -97,10 +97,10 @@ class Grid():
         output = []
         for i in range(m):
             for j in range(n-1):
-                output.append(Grid(m,n,matrice).swap((i,j),(i,j+1)))
+                output.append(Grid(m, n, matrice).swap((i,j),(i,j+1)))
         for j in range(n):
             for i in range(m-1):
-                output.append(Grid(m,n,matrice).swap((i,j),(i+1,j)))
+                output.append(Grid(m, n, matrice).swap((i,j),(i+1,j)))
         return output
 
     def is_sorted(self):
@@ -115,6 +115,37 @@ class Grid():
                 if state[i][j] != i*n + j + 1:
                     return False
         return True
+
+    def authorized_swap(self, cell1, cell2):
+
+        m = len(self.state)
+
+        n = len(self.state[0])
+
+        diff_h = abs(cell1[0]-cell2[0])
+
+        diff_l = abs(cell1[1]-cell2[1])
+        
+        z = [o for o in range(0, n)]
+
+        z_2 = [k for k in range(0, m)]
+
+        if (cell1[0] not in z_2) or (cell2[0] not in z_2):
+
+            return False
+
+        elif (cell1[1] not in z) or (cell2[1] not in z):
+
+            return False
+
+        elif (diff_h == 1 and diff_l == 1):
+
+            return False
+
+        else:
+
+            return True
+
 
     def swap(self, cell1, cell2):
         """
