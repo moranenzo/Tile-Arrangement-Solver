@@ -136,6 +136,34 @@ class Graph:
             chemin = [child] + chemin
         return chemin
 
+     def A_star(self, src, dst, heuristic):
+        open_list = heapq.heapify([(src, 0, src.dist(dst, self))])  # pile de tuple de la forme (noeud, coût, heuristique)
+        #le coût est le coût de src vers le noeud, l'heuristique est la "distance" entre noeud et dst
+        closed_list= []
+        father = {}
+
+        while open_list:
+            tuple = heapq.heappop(open_list)
+            node = tuple[0]  # node est une grid
+            node_cost = tuple[1]
+
+            if node == dst:
+                path = [dst]
+                while node != src :
+                    path.append(father[node])
+                    node = father[node]
+                return path[::-1]
+
+
+            else:
+                neighbors = nod^M le.neighbors(self)
+                current_cost = node_cost + 2  # pour passer de node à current, on doit faire un swap qui entraîne une différence sur 2 positions entre node et current
+
+                for current in neighbors:
+                    current_heur = current.heuristic(dst, self)
+
+                    if 
+
 
 
 
