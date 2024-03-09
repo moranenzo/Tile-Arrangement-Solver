@@ -163,6 +163,54 @@ class Graph:
                     current_heur = current.heuristic(dst, self)
 
                     if 
+    
+    def A_star2(self,src,dst):
+        open_list=[(src,0,src.dsit(dst,self),[])] # içi la liste source n'a pas de père 
+        closed_list= []
+        path=[]
+          
+        while open_list:
+            if open_list[0][0]==dst:
+                
+                path.append(dst)
+                father=open_list[0][3]
+                while father:
+                    
+                    for acn in closed_list : #acn pour already closed nodes
+                        if acn[0] ==father:
+                            open_list[0]=acn
+                            path.append(acn[0])
+                            father=open_list[0][3]
+                open_list=[]
+            else:
+                icl=0 #icl pour in closed list
+                for acn in closed_list: 
+                    if acn[0]==open_list[0][0]:
+                        if acn[2]>open_list[0][2]: #si  l'heuristique du noeud déjà visité est meilleure alors on remplace ce noeud dans la liste afin d'obtenir le meilleur père possible
+                            index=closed_list.index(acn) 
+                            closed_list[index]=open_list[0]
+                            icl=+1
+                            neighbors=neighbors(open_list[0][0])
+                            for neighbor in neighbors:
+                                open_list.append((neighbor,open_list[0][1]+1,open_list[0][1]+1+neighbor.dist(dst, self),open_list[0][0])) #on definit le nouveau coût de ses voisins ainsi que la nouvelle heuristique 
+                                open_list.pop(0)
+                                open_list.sort(key=lambda x: x[2])
+                if icl==0:
+                    closed_list.append(open_list[0])
+                    neighbors=neighbors(open_list[0][0])
+                    for neighbor in neighbors:
+                        open_list.append((neighbor,open_list[0][1]+1,open_list[0][1]+1+neighbor.dist(dst, self),open_list[0][0]))
+                    open_list.pop(0)
+                    open_list.sort(key=lambda x: x[2])
+
+        return path
+
+                    
+
+                
+
+
+                
 
 
 

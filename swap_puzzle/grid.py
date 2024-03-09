@@ -165,16 +165,7 @@ class Grid():
             self.state[cell1[0]][cell1[1]], self.state[cell2[0]][cell2[1]] = v2, v1
 
     def swap_seq(self, cell_pair_list):
-        """
-        Executes a sequence of swaps. 
-
-        Parameters:
-        -----------
-        cell_pair_list: list[tuple[tuple[int]]]
-            List of swaps, each swap being a tuple of two cells (each cell being a tuple of
-            integers).
-            So the format should be [((i1, j1), (i2, j2)), ((i1', j1'), (i2', j2')), ...].
-        """
+        
         for tuple in cell_pair_list:
             self.swap(tuple[0], tuple[1])
 
