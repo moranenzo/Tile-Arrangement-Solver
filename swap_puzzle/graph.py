@@ -109,27 +109,27 @@ class Graph:
             father[node] = src
 
         while queue:
-            current = queue.pop(0)  # on prend le premier élément de la file
-            visited.append(current)  # on le visite
+            current = queue.pop(0)  # on prend le premier élément de la file.
+            visited.append(current)  # on le visite.
 
-            neighbors = graph[current]  # on isole ses voisins
+            neighbors = graph[current]  # on isole ses voisins.
             for neighbor in neighbors:
-                if neighbor == dst:  # dans ce cas on a trouvé un chemin reliant src et dst donc pas besoin de continuer la recherche
+                if neighbor == dst:  # dans ce cas on a trouvé un chemin reliant src et dst donc pas besoin de continuer la recherche.
                     visited.append(dst)
                     father[dst] = current
-                    queue = []  # permet de sortir de la boucle while
+                    queue = []  # permet de sortir de la boucle while.
 
-                elif (neighbor not in visited) and (neighbor not in queue):  # si neighbor n'a pas encore été considéré
-                    queue.append(neighbor)  # on le met dans la file
+                elif (neighbor not in visited) and (neighbor not in queue):  # si neighbor n'a pas encore été considéré.
+                    queue.append(neighbor)  # on le met dans la file.
                     father[neighbor] = current
 
-        if visited[-1] != dst:  # on vérifie qu'un chemin entre src et dst existe
+        if visited[-1] != dst:  # on vérifie qu'un chemin entre src et dst existe.
             return None
 
-        # optimisation du chemin reliant src et dst à partir de visited
+        # optimisation du chemin reliant src et dst à partir de visited.
         child = dst
         father = father[dst]
-        chemin = [dst]  # on va remplir le chemin en partant de dst
+        chemin = [dst]  # on va remplir le chemin en partant de dst.
         while child != src :
             child = father
             father = father[child]
@@ -137,14 +137,14 @@ class Graph:
         return chemin
 
      def A_star(self, src, dst, heuristic):
-        open_list = heapq.heapify([(src, 0, src.dist(dst, self))])  # pile de tuple de la forme (noeud, coût, heuristique)
-        #le coût est le coût de src vers le noeud, l'heuristique est la "distance" entre noeud et dst
+        open_list = heapq.heapify([(src, 0, src.dist(dst, self))])  # pile de tuple de la forme (noeud, coût, heuristique).
+        #le coût est le coût de src vers le noeud, l'heuristique est la "distance" entre noeud et dst.
         closed_list= []
         father = {}
 
         while open_list:
             tuple = heapq.heappop(open_list)
-            node = tuple[0]  # node est une grid
+            node = tuple[0]  # node est une grid.
             node_cost = tuple[1]
 
             if node == dst:
@@ -157,7 +157,7 @@ class Graph:
 
             else:
                 neighbors = nod^M le.neighbors(self)
-                current_cost = node_cost + 2  # pour passer de node à current, on doit faire un swap qui entraîne une différence sur 2 positions entre node et current
+                current_cost = node_cost + 2  # pour passer de node à current, on doit faire un swap qui entraîne une différence sur 2 positions entre node et current.
 
                 for current in neighbors:
                     current_heur = current.heuristic(dst, self)
@@ -165,8 +165,8 @@ class Graph:
                     if 
     
     def A_star2(self,src,dst):
-        open_list=[(src,0,src.dist(dst,self),[])] # içi la liste source n'a pas de père 
-        closed_list= []
+        open_list=[(src,0,src.dist(dst,self),[])] # içi la liste source n'a pas de père.
+        closed_list=[]
         path=[]
           
         while open_list:
@@ -174,28 +174,28 @@ class Graph:
                 
                 path.append(dst)
                 father=open_list[0][3]
-                while father:
+                while father: # Permet de remonter jusqu'a la grille source qui est la seule à ne pas avoir de père.
                     
-                    for acn in closed_list : #acn pour already closed nodes
+                    for acn in closed_list : #acn pour already closed nodes.
                         if acn[0] ==father:
                             open_list[0]=acn
                             path.append(acn[0])
                             father=open_list[0][3]
-                open_list=[]
+                open_list=[] #Permet de sortir de la première boucle while.
             else:
-                icl=0 #icl pour in closed list
-                for acn in closed_list: 
-                    if acn[0]==open_list[0][0]:
-                        if acn[2]>open_list[0][2]: #si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible
-                            index=closed_list.index(acn) 
-                            closed_list[index]=open_list[0]
-                            icl=+1
+                icl=False #icl pour in closed list.
+                for i in range len(closed_list): 
+                    if closed_list[i][0]==open_list[0][0]:
+                        icl= True
+                        if closed_list[i][2]>open_list[0][2]: #si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
+                            closed_list[i]=open_list[0]
                             neighbors=neighbors(open_list[0][0])
                             for neighbor in neighbors:
-                                open_list.append((neighbor,open_list[0][1]+1,open_list[0][1]+1+neighbor.dist(dst, self),open_list[0][0])) #on définit le nouveau coût de ses voisins ainsi que la nouvelle heuristique 
-                                open_list.pop(0)
-                                open_list.sort(key=lambda x: x[2])
-                if icl==0:
+                                open_list.append((neighbor,open_list[0][1]+1,open_list[0][1]+1+neighbor.dist(dst, self),open_list[0][0])) #on définit le nouveau coût de ses voisins ainsi que la nouvelle heuristique.
+                        open_list.pop(0)
+                        open_list.sort(key=lambda x: x[2]) # Permet de trier la grille selon les heuristiques.
+                        
+                if not icl: # Si icl vaut True on a déjà effectué les opérations nécessaires.
                     closed_list.append(open_list[0])
                     neighbors=neighbors(open_list[0][0])
                     for neighbor in neighbors:
