@@ -87,9 +87,14 @@ class Grid():
     def generate(self):
         m = self.m
         n = self.n
-        sorted = [i for i in range(1, m*n+1)]  # Creating the list sorted
-        output = list(permutations(sorted, m*n))  # Generating all possible permutations of the sorted list
+        output = []
+        sorted = [i for i in range(1, m*n+1)]  # crée la liste des entiers de 1 à mn
+        perms = list(permutations(sorted)) # Renvoie une liste de tuple (chaque tuple est une permutation de sorted)
+        for tuple in perms:
+            temp = [tuple[i:i+n] for i in range(m)]
+            output.append(temp)
         return output
+
 
     def neighbors(self):
         n = self.n

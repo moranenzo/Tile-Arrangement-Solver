@@ -6,10 +6,8 @@ import sys
 pygame.init()
 
 # Taille de la fenêtre Pygame
-WINDOW_SIZE = 800
+WINDOW_SIZE = 900
 
-# Taille de la fenêtre de victoire
-WIN_WINDOW_SIZE = 600
 
 # Couleurs
 WHITE = (255, 255, 255)
@@ -84,6 +82,9 @@ def main(size, cell_size):
         # Mise à jour de la grille et projection de la grille
         draw_grid(grid, cell_size, font)
         pygame.display.flip()
+
+    # Taille de la fenêtre de victoire
+    WIN_WINDOW_SIZE = 600
 
     # Afficher l'écran de vVictoire du jeu
     win_screen = pygame.Surface((WIN_WINDOW_SIZE, WIN_WINDOW_SIZE))
