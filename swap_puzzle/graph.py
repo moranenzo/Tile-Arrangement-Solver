@@ -137,8 +137,8 @@ class Graph:
         return chemin
 
     
-    def A_star2(self,src,dst):
-        open_list=[(src,0,src.dist(dst,self),[])] # içi la liste source n'a pas de père.
+    def A_star(self,src,dst):
+        open_list=[(src.hash(),0,src.dist(dst,self),[])] # içi la liste source n'a pas de père.
         closed_list=[]
         path=[]
           
@@ -160,19 +160,21 @@ class Graph:
                 for i in range (0, len(closed_list)): 
                     if closed_list[i][0]==open_list[0][0]:
                         icl= True
-                        if closed_list[i][2]>open_list[0][2]: #si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
-                            closed_list[i]=open_list[0]
-                            neighbors=neighbors(open_list[0][0])
+                        if closed_list[i][2]> open_list[0][2]: #si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
+                            closed_list[i]= open_list[0]
+                            neighbors = graph[open_list[0][0]]
                             for neighbor in neighbors:
-                                open_list.append((neighbor,open_list[0][1]+1,open_list[0][1]+1+neighbor.dist(dst, self),open_list[0][0])) #on définit le nouveau coût de ses voisins ainsi que la nouvelle heuristique.
+                                neighbor1=Grid(src.m, src.n, neighbor)
+                                open_list.append((neighbor1.hash(), open_list[0][1]+1, open_list[0][1]+1+neighbor1.dist(dst, self), open_list[0][0])) #on définit le nouveau coût de ses voisins ainsi que la nouvelle heuristique.
                         open_list.pop(0)
                         open_list.sort(key=lambda x: x[2]) # Permet de trier la grille selon les heuristiques.
                         
                 if not icl: # Si icl vaut True on a déjà effectué les opérations nécessaires.
                     closed_list.append(open_list[0])
-                    neighbors=neighbors(open_list[0][0])
+                    neighbors = graph[open_list[0][0]]
                     for neighbor in neighbors:
-                        open_list.append((neighbor,open_list[0][1]+1,open_list[0][1]+1+neighbor.dist(dst, self),open_list[0][0]))
+                        neighbor1 = Grid(src.m, src.n, neighbor)
+                        open_list.append((neighbor1.hash(), open_list[0][1]+1, open_list[0][1]+1+neighbor1.dist(dst, self), open_list[0][0]))
                     open_list.pop(0)
                     open_list.sort(key=lambda x: x[2])
 
