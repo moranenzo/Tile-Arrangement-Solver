@@ -167,7 +167,44 @@ class Grid():
     def swap_seq(self, cell_pair_list):
         
         for tuple in cell_pair_list:
-            self.swap(tuple[0], tuple[1])
+            if str(self.authorized_swap(tuple))=="True":
+                self.swap(tuple[0], tuple[1])
+    
+    def accurate_dist(self, dst, graph):
+        """ arguments : self : grid
+                        grid : grid
+                        graph : graph
+        """
+        if self.state == dst.state:
+            return 0
+
+        neighbors = graph.graph[tuple(self.state)]  # sélection de tous les voisins de self
+
+        if dst in neighbors:
+            return 1
+        else:
+            m, n = self.m, self.n
+
+            closest_node = Grid(m, n, neighbors[0])  # neighbor[0]:tuple on le transforme en grid pour pouvoir réutiliser accurate_dist
+            dist_min = closest_node.accurate_dist(dst, graph)
+
+            for neighbor in neighbors:
+                current_grid = Grid(m, n, neighbor)
+                current_dist = current_grid.accurate_dist(dst, graph)
+
+                if current_dist < dist_min:
+                    closest_node = current_grid
+
+            return 1 + dist_min
+
+    def rough_dist(self, grid, graph):
+        """ arguments : self : grid
+                        grid : grid
+                        graph : graph (inutile mais permet d'avoir les mêmes arguments que accurate_dist)
+        """
+        return sum([self.state[i][j] != grid.state[i][j] for i in range(self.m) for j in range(self.n)])
+
+
 
     @classmethod
     def grid_from_file(cls, file_name):
