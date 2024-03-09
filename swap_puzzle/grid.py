@@ -76,6 +76,7 @@ class Grid():
 
         plt.show()
 
+
     def hash(self):
         """
         Returns the tuple associated to the list self.state
@@ -203,7 +204,7 @@ class Grid():
                         graph : graph (inutile mais permet d'avoir les mêmes arguments que accurate_dist)
         """
         return sum([self.state[i][j] != grid.state[i][j] for i in range(self.m) for j in range(self.n)])
-
+    
 
 
     @classmethod

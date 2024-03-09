@@ -9,7 +9,7 @@ pygame.init()
 WINDOW_SIZE = 800
 
 # Taille de la fenêtre de victoire
-WIN_WINDOW_SIZE = 400
+WIN_WINDOW_SIZE = 600
 
 # Couleurs
 WHITE = (255, 255, 255)
@@ -25,6 +25,7 @@ def shuffle_grid(size):
     # Création de la grille
     grid = [numbers[i:i+size] for i in range(0, size*size, size)]
     return grid
+
 
 # Fonction pour dessiner la Grille
 def draw_grid(grid, cell_size, font):

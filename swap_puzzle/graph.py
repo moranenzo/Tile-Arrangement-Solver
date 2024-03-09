@@ -1,7 +1,7 @@
 """
 This is the graph module. It contains a minimalistic Graph class.
 """
-import Grid from grid
+from grid import Grid
 
 class Graph:
     """
@@ -136,33 +136,6 @@ class Graph:
             chemin = [child] + chemin
         return chemin
 
-     def A_star(self, src, dst, heuristic):
-        open_list = heapq.heapify([(src, 0, src.dist(dst, self))])  # pile de tuple de la forme (noeud, coût, heuristique).
-        #le coût est le coût de src vers le noeud, l'heuristique est la "distance" entre noeud et dst.
-        closed_list= []
-        father = {}
-
-        while open_list:
-            tuple = heapq.heappop(open_list)
-            node = tuple[0]  # node est une grid.
-            node_cost = tuple[1]
-
-            if node == dst:
-                path = [dst]
-                while node != src :
-                    path.append(father[node])
-                    node = father[node]
-                return path[::-1]
-
-
-            else:
-                neighbors = nod^M le.neighbors(self)
-                current_cost = node_cost + 2  # pour passer de node à current, on doit faire un swap qui entraîne une différence sur 2 positions entre node et current.
-
-                for current in neighbors:
-                    current_heur = current.heuristic(dst, self)
-
-                    if 
     
     def A_star2(self,src,dst):
         open_list=[(src,0,src.dist(dst,self),[])] # içi la liste source n'a pas de père.
@@ -184,7 +157,7 @@ class Graph:
                 open_list=[] #Permet de sortir de la première boucle while.
             else:
                 icl=False #icl pour in closed list.
-                for i in range len(closed_list): 
+                for i in range (0, len(closed_list)): 
                     if closed_list[i][0]==open_list[0][0]:
                         icl= True
                         if closed_list[i][2]>open_list[0][2]: #si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
