@@ -3,6 +3,7 @@ This is the graph module. It contains a minimalistic Graph class.
 """
 from grid import Grid
 
+
 class Graph:
     """
     A class representing undirected graphs as adjacency lists.
@@ -120,17 +121,15 @@ class Graph:
                 neighbors = graph[current.hash()]
                 for neighbor in neighbors:
                     count = 0
-                    for av in visited: #av pour already visited
+                    for av in visited:  # av pour already visited
                         if neighbor.hash() == av.hash():
                             count += 1
-                    for iq in queue:  #iq pour in queue
+                    for iq in queue:   # iq pour in queue
                         if neighbor.hash() == iq.hash():
                             count += 1
                     if count == 0:
                         queue.append(neighbor)  
                         father[neighbor.hash()] = current
-
-
         # On vérifie qu'un chemin entre src et dst a bien été trouvé
         if not found_path:
             return None
@@ -144,61 +143,47 @@ class Graph:
 
         return chemin
 
-
-    
-    def A_star(self,src,dst):
-        open_list=[(src.hash(),0,src.dist(dst,self),[])] # içi la liste source n'a pas de père.
-        closed_list=[]
-        path=[]
-        graph = self.graph
+   
+    def A_star(self, src, dst):
+        open_list = [(src, 0, src.manhattan_dist(dst, self), [])]  # içi la liste source n'a pas de père.
+        closed_list = []
+        path = []
           
         while open_list:
-            if open_list[0][0]==dst:
+            if open_list[0][0].state == dst:
                 
                 path.append(dst)
-                father=open_list[0][3]
-                while father: # Permet de remonter jusqu'a la grille source qui est la seule à ne pas avoir de père.
+                father = open_list[0][3]
+                while father:  # Permet de remonter jusqu'a la grille source qui est la seule à ne pas avoir de père.
                     
-                    for acn in closed_list : #acn pour already closed nodes.
-                        if acn[0] ==father:
-                            open_list[0]=acn
-                            path.append(acn[0])
-                            father=open_list[0][3]
-                open_list=[] #Permet de sortir de la première boucle while.
+                    for acn in closed_list:  # acn pour already closed nodes.
+                        if acn[0].state == father.state:
+                            open_list[0] = acn
+                            path.append(acn[0].hash())
+                            father = open_list[0][3]
+                open_list = []  # Permet de sortir de la première boucle while.
             else:
-                icl=False #icl pour in closed list.
-                for i in range (0, len(closed_list)): 
-                    if closed_list[i][0]==open_list[0][0]:
-                        icl= True
-                        if closed_list[i][2]> open_list[0][2]: #si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
-                            closed_list[i]= open_list[0]
-                            neighbors = graph[open_list[0][0]]
+                icl = False  # icl pour in closed list.
+                for i in range(0, len(closed_list)): 
+                    if closed_list[i][0].state == open_list[0][0].state:
+                        icl = True
+                        if closed_list[i][2] > open_list[0][2]:  # Si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
+                            closed_list[i] = open_list[0]
+                            neighbors = open_list[0][0].neighbors()
                             for neighbor in neighbors:
-                                neighbor1=Grid(src.m, src.n, neighbor)
-                                open_list.append((neighbor1.hash(), open_list[0][1]+1, open_list[0][1]+1+neighbor1.dist(dst, self), open_list[0][0])) #on définit le nouveau coût de ses voisins ainsi que la nouvelle heuristique.
+                                open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst, self), open_list[0][0]))  
+                                # on définit le nouveau coût de ses voisins ainsi que la nouvelle heuristique.
                         open_list.pop(0)
-                        open_list.sort(key=lambda x: x[2]) # Permet de trier la grille selon les heuristiques.
+                        open_list.sort(key=lambda x: x[2])  # Permet de trier la grille selon les heuristiques.
                         
-                if not icl: # Si icl vaut True on a déjà effectué les opérations nécessaires.
+                if not icl:  # Si icl vaut True on a déjà effectué les opérations nécessaires.
                     closed_list.append(open_list[0])
-                    neighbors = graph[open_list[0][0]]
+                    neighbors = open_list[0][0].neighbors()
                     for neighbor in neighbors:
-                        neighbor1 = Grid(src.m, src.n, neighbor)
-                        open_list.append((neighbor1.hash(), open_list[0][1]+1, open_list[0][1]+1+neighbor1.dist(dst, self), open_list[0][0]))
+                        open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst, self), open_list[0][0]))
                     open_list.pop(0)
                     open_list.sort(key=lambda x: x[2])
-
         return path
-
-                    
-
-                
-
-
-                
-
-
-
 
     @classmethod
     def graph_from_file(cls, file_name):
