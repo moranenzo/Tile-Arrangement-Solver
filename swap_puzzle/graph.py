@@ -100,47 +100,57 @@ class Graph:
         """
         graph = self.graph
 
-        # détermination d'un chemin reliant src et dst
-        queue = graph[src]
-        visited = [src]
-
+        # Initialisation
+        queue = [src]  
+        visited = set()  
         father = {}
+        found_path = False  
+        
+        # On détermine un chemin reliant src et dst
         for node in queue:
-            father[node] = src
+            father[node.hash()] = None
 
-        while queue:
-            current = queue.pop(0)  # on prend le premier élément de la file.
-            visited.append(current)  # on le visite.
+        while queue and not found_path:
+            current = queue.pop(0)  
+            visited.add(current)  
+            if current.hash() == dst.hash():
+                found_path = True  
+                
+            else:
+                neighbors = graph[current.hash()]
+                for neighbor in neighbors:
+                    count = 0
+                    for av in visited: #av pour already visited
+                        if neighbor.hash() == av.hash():
+                            count += 1
+                    for iq in queue:  #iq pour in queue
+                        if neighbor.hash() == iq.hash():
+                            count += 1
+                    if count == 0:
+                        queue.append(neighbor)  
+                        father[neighbor.hash()] = current
 
-            neighbors = graph[current]  # on isole ses voisins.
-            for neighbor in neighbors:
-                if neighbor == dst:  # dans ce cas on a trouvé un chemin reliant src et dst donc pas besoin de continuer la recherche.
-                    visited.append(dst)
-                    father[dst] = current
-                    queue = []  # permet de sortir de la boucle while.
 
-                elif (neighbor not in visited) and (neighbor not in queue):  # si neighbor n'a pas encore été considéré.
-                    queue.append(neighbor)  # on le met dans la file.
-                    father[neighbor] = current
-
-        if visited[-1] != dst:  # on vérifie qu'un chemin entre src et dst existe.
+        # On vérifie qu'un chemin entre src et dst a bien été trouvé
+        if not found_path:
             return None
 
-        # optimisation du chemin reliant src et dst à partir de visited.
+        # Optimisation du chemin reliant src et dst à partir de visited.
         child = dst
-        father = father[dst]
-        chemin = [dst]  # on va remplir le chemin en partant de dst.
-        while child != src :
-            child = father
-            father = father[child]
-            chemin = [child] + chemin
+        chemin = []
+        while child:
+            chemin = [child.hash()] + chemin
+            child = father[child.hash()]
+
         return chemin
+
 
     
     def A_star(self,src,dst):
         open_list=[(src.hash(),0,src.dist(dst,self),[])] # içi la liste source n'a pas de père.
         closed_list=[]
         path=[]
+        graph = self.graph
           
         while open_list:
             if open_list[0][0]==dst:
