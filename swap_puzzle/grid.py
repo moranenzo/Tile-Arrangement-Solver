@@ -5,7 +5,7 @@ import random
 import numpy as np
 from copy import deepcopy
 import matplotlib.pyplot as plt
-from itertools import permutations # we are going to use this feature in the function generate to create all the grids
+from itertools import permutations  # we are going to use this feature in the function generate to create all the grids
 
 
 class Grid():
@@ -90,10 +90,10 @@ class Grid():
         n = self.n
         output = []
         sorted = [i for i in range(1, m*n+1)]  # crée la liste des entiers de 1 à mn
-        perms = list(permutations(sorted)) # Renvoie une liste de tuple (chaque tuple est une permutation de sorted)
+        perms = list(permutations(sorted))  # Renvoie une liste de tuple (chaque tuple est une permutation de sorted)
         for tuple in perms:
             temp = (tuple[n*i:n*i+n] for i in range(m))
-            possibility= Grid(m,n,temp)
+            possibility = Grid(m, n, temp)
             output.append(possibility.hash())
         print(possibility)
         
@@ -103,21 +103,20 @@ class Grid():
     def neighbors(self):
         n = self.n
         m = self.m
-        matrice = self.state
         output = []
 
-        # Construction des grilles à un swap horizontal d'écart de self 
+        # Construction des grilles à un swap horizontal d'écart de self.
         for i in range(m):
             for j in range(n-1):
-                neighbor = deepcopy(self) #permet d'éliminer les effets de bords
-                neighbor.swap((i,j),(i,j+1))
+                neighbor = deepcopy(self)  # Permet d'éliminer les effets de bords.
+                neighbor.swap((i, j), (i, j+1))
                 output.append(neighbor.state)
 
-        # Construction des grilles à un swap vertical d'écart de self 
+        # Construction des grilles à un swap vertical d'écart de self.
         for j in range(n):
             for i in range(m-1):
                 neighbor = deepcopy(self)
-                neighbor.swap((i,j),(i+1,j))
+                neighbor.swap((i, j), (i+1, j))
                 output.append(neighbor.state)
 
         return output 
@@ -143,13 +142,13 @@ class Grid():
         z = [o for o in range(0, self.n)]
         z_2 = [k for k in range(0, self.m)]
 
-        #On vérifie que cell1 et cell2 appartiennent bien au graph
+        # On vérifie que cell1 et cell2 appartiennent bien au graph.
         if (cell1[0] not in z_2) or (cell2[0] not in z_2):
             return False
         elif (cell1[1] not in z) or (cell2[1] not in z):
             return False
 
-        #On vérifie que les cases sont bien adjacentes
+        # On vérifie que les cases sont bien adjacentes.
         elif (diff_h == 1 and diff_l == 0) or (diff_h == 0 and diff_l == 1):
             return True
 
@@ -178,6 +177,17 @@ class Grid():
         
         for tuple in cell_pair_list:
             self.swap(tuple[0], tuple[1])
+    def manhattan_dist(self, dst):
+
+        """
+        Calcule la distance de Manhattan entre deux matrices.
+        """
+        distance = 0
+        for i in range(len(self.m)):
+            for j in range(self.n):
+                distance += abs(self.state[i][j] - dst.state[i][j])
+
+        return distance 
     
     def accurate_dist(self, dst, graph):
         """ arguments : self : grid
@@ -187,14 +197,14 @@ class Grid():
         if self.state == dst.state:
             return 0
 
-        neighbors = graph.graph[tuple(self.state)]  # sélection de tous les voisins de self
+        neighbors = graph.graph[tuple(self.state)]  # Sélection de tous les voisins de self.
 
         if dst in neighbors:
             return 1
         else:
             m, n = self.m, self.n
 
-            closest_node = Grid(m, n, neighbors[0])  # neighbor[0]:tuple on le transforme en grid pour pouvoir réutiliser accurate_dist
+            closest_node = Grid(m, n, neighbors[0])  # Neighbor[0]:tuple on le transforme en grid pour pouvoir réutiliser accurate_dist.
             dist_min = closest_node.accurate_dist(dst, graph)
 
             for neighbor in neighbors:
