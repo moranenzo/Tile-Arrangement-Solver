@@ -102,34 +102,34 @@ class Graph:
         graph = self.graph
 
         # Initialisation
-        queue = [src]  
-        visited = set()  
+        queue = [src] 
         father = {}
-        found_path = False  
-        
-        # On détermine un chemin reliant src et dst
+        found_path = False
+
+        #On détermine un chemin reliant src et dst
         for node in queue:
             father[node.hash()] = None
 
         while queue and not found_path:
-            current = queue.pop(0)  
-            visited.add(current)  
+            current = queue.pop(0)
             if current.hash() == dst.hash():
-                found_path = True  
-                
+                found_path = True
+
             else:
                 neighbors = graph[current.hash()]
                 for neighbor in neighbors:
-                    count = 0
-                    for av in visited:  # av pour already visited
-                        if neighbor.hash() == av.hash():
-                            count += 1
-                    for iq in queue:   # iq pour in queue
-                        if neighbor.hash() == iq.hash():
-                            count += 1
-                    if count == 0:
-                        queue.append(neighbor)  
+                    considered = False
+                    for visited in father:
+                        if neighbor.hash() == visited:
+                            considered = True
+                    for inqueue in queue:
+                        if neighbor.hash() == inqueue.hash():
+                            considered = True
+                    if considered == False:
+                        queue.append(neighbor)
                         father[neighbor.hash()] = current
+
+
         # On vérifie qu'un chemin entre src et dst a bien été trouvé
         if not found_path:
             return None
@@ -145,33 +145,37 @@ class Graph:
 
    
     def A_star(self, src, dst):
-        open_list = [(src, 0, src.manhattan_dist(dst, self), [])]  # içi la liste source n'a pas de père.
+        open_list = [(src, 0, src.manhattan_dist(dst), [])]  # içi la liste source n'a pas de père.
         closed_list = []
         path = []
           
         while open_list:
-            if open_list[0][0].state == dst:
-                
-                path.append(dst)
+            if open_list[0][0].state == dst.state:
+                path.append(dst.hash())
                 father = open_list[0][3]
                 while father:  # Permet de remonter jusqu'a la grille source qui est la seule à ne pas avoir de père.
                     
                     for acn in closed_list:  # acn pour already closed nodes.
-                        if acn[0].state == father.state:
+                            
+                        if (father != []) and (acn[0].state == father.state):
                             open_list[0] = acn
-                            path.append(acn[0].hash())
+                            path = [acn[0].hash()] + path
                             father = open_list[0][3]
                 open_list = []  # Permet de sortir de la première boucle while.
             else:
                 icl = False  # icl pour in closed list.
                 for i in range(0, len(closed_list)): 
+                    if closed_list:
+                        break
                     if closed_list[i][0].state == open_list[0][0].state:
+                        print(i)
+                        print(len(closed_list))
                         icl = True
                         if closed_list[i][2] > open_list[0][2]:  # Si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
                             closed_list[i] = open_list[0]
                             neighbors = open_list[0][0].neighbors()
                             for neighbor in neighbors:
-                                open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst, self), open_list[0][0]))  
+                                open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst), open_list[0][0]))  
                                 # on définit le nouveau coût de ses voisins ainsi que la nouvelle heuristique.
                         open_list.pop(0)
                         open_list.sort(key=lambda x: x[2])  # Permet de trier la grille selon les heuristiques.
@@ -180,7 +184,7 @@ class Graph:
                     closed_list.append(open_list[0])
                     neighbors = open_list[0][0].neighbors()
                     for neighbor in neighbors:
-                        open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst, self), open_list[0][0]))
+                        open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst), open_list[0][0]))
                     open_list.pop(0)
                     open_list.sort(key=lambda x: x[2])
         return path
