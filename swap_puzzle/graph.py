@@ -143,14 +143,21 @@ class Graph:
 
         return chemin
 
-   
+
     def A_star(self, src, dst):
         open_list = [(src, 0, src.manhattan_dist(dst), [])]  # içi la liste source n'a pas de père.
         closed_list = []
         path = []
-          
+        if src.state != dst.state:
+            closed_list.append(open_list[0])
+            neighbors = open_list[0][0].neighbors()
+            for neighbor in neighbors:
+                open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst), open_list[0][0]))
+            open_list.pop(0)
+            open_list.sort(key=lambda x: x[2])
+              
         while open_list:
-            if open_list[0][0].state == dst.state:
+            if open_list[0][0].state == dst.state:       
                 path.append(dst.hash())
                 father = open_list[0][3]
                 while father:  # Permet de remonter jusqu'a la grille source qui est la seule à ne pas avoir de père.
@@ -168,11 +175,10 @@ class Graph:
                     if closed_list:
                         break
                     if closed_list[i][0].state == open_list[0][0].state:
-                        print(i)
-                        print(len(closed_list))
                         icl = True
                         if closed_list[i][2] > open_list[0][2]:  # Si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
                             closed_list[i] = open_list[0]
+
                             neighbors = open_list[0][0].neighbors()
                             for neighbor in neighbors:
                                 open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst), open_list[0][0]))  
@@ -184,7 +190,8 @@ class Graph:
                     closed_list.append(open_list[0])
                     neighbors = open_list[0][0].neighbors()
                     for neighbor in neighbors:
-                        open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst), open_list[0][0]))
+                         if neighbor != open_list[0][3].state: 
+                            open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst), open_list[0][0]))
                     open_list.pop(0)
                     open_list.sort(key=lambda x: x[2])
         return path
