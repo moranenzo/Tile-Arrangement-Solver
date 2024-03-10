@@ -3,8 +3,9 @@ This is the grid module. It contains the Grid class and its associated methods.
 """
 import random
 import numpy as np
+from copy import deepcopy
 import matplotlib.pyplot as plt
-from itertools import permutations  # we are going to use this feature in the function generate to create all the grids
+from itertools import permutations # we are going to use this feature in the function generate to create all the grids
 
 
 class Grid():
@@ -91,9 +92,12 @@ class Grid():
         sorted = [i for i in range(1, m*n+1)]  # crée la liste des entiers de 1 à mn
         perms = list(permutations(sorted)) # Renvoie une liste de tuple (chaque tuple est une permutation de sorted)
         for tuple in perms:
-            temp = [tuple[i:i+n] for i in range(m)]
-            output.append(temp)
-        return output
+            temp = (tuple[n*i:n*i+n] for i in range(m))
+            possibility= Grid(m,n,temp)
+            output.append(possibility.hash())
+        print(possibility)
+        
+        return output 
 
 
     def neighbors(self):
@@ -101,13 +105,22 @@ class Grid():
         m = self.m
         matrice = self.state
         output = []
+
+        # Construction des grilles à un swap horizontal d'écart de self 
         for i in range(m):
             for j in range(n-1):
-                output.append(Grid(m, n, matrice).swap((i,j),(i,j+1)))
+                neighbor = deepcopy(self) #permet d'éliminer les effets de bords
+                neighbor.swap((i,j),(i,j+1))
+                output.append(neighbor.state)
+
+        # Construction des grilles à un swap vertical d'écart de self 
         for j in range(n):
             for i in range(m-1):
-                output.append(Grid(m, n, matrice).swap((i,j),(i+1,j)))
-        return output
+                neighbor = deepcopy(self)
+                neighbor.swap((i,j),(i+1,j))
+                output.append(neighbor.state)
+
+        return output 
 
     def is_sorted(self):
         """
@@ -124,32 +137,20 @@ class Grid():
 
     def authorized_swap(self, cell1, cell2):
 
-        m = len(self.state)
-
-        n = len(self.state[0])
-
         diff_h = abs(cell1[0]-cell2[0])
-
         diff_l = abs(cell1[1]-cell2[1])
-        
-        z = [o for o in range(0, n)]
 
-        z_2 = [k for k in range(0, m)]
+        z = [o for o in range(0, self.n)]
+        z_2 = [k for k in range(0, self.m)]
 
+        #On vérifie que cell1 et cell2 appartiennent bien au graph
         if (cell1[0] not in z_2) or (cell2[0] not in z_2):
-
             return False
-
         elif (cell1[1] not in z) or (cell2[1] not in z):
-
             return False
 
-        elif (diff_h == 1 and diff_l == 1):
-
-            return False
-
-        else:
-
+        #On vérifie que les cases sont bien adjacentes
+        elif (diff_h == 1 and diff_l == 0) or (diff_h == 0 and diff_l == 1):
             return True
 
 
@@ -165,7 +166,10 @@ class Grid():
             column number of the cell.
         """
        
-        if str(self.authorized_swap(cell1, cell2))== "True":
+        if not self.authorized_swap(cell1, cell2):
+            raise Exception("Sorry, this cells can not be swapped")
+
+        else:
             v1 = self.state[cell1[0]][cell1[1]]
             v2 = self.state[cell2[0]][cell2[1]]
             self.state[cell1[0]][cell1[1]], self.state[cell2[0]][cell2[1]] = v2, v1
@@ -173,8 +177,7 @@ class Grid():
     def swap_seq(self, cell_pair_list):
         
         for tuple in cell_pair_list:
-            if str(self.authorized_swap(tuple))=="True":
-                self.swap(tuple[0], tuple[1])
+            self.swap(tuple[0], tuple[1])
     
     def accurate_dist(self, dst, graph):
         """ arguments : self : grid
