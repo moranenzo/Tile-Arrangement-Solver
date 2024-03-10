@@ -105,6 +105,7 @@ def main(size, cell_size):
     pygame.time.wait(5000)
     pygame.quit()
 
+
 # Mise en place d'un choix de niveau de difficulté
 def start_game(difficulty):
     if difficulty == "Easy":
@@ -113,6 +114,7 @@ def start_game(difficulty):
         main(4, WINDOW_SIZE // 4)
     elif difficulty == "Hard":
         main(5, WINDOW_SIZE // 5)
+
 
 # Fonction d'affichage du niveau de difficulté
 def show_difficulty_select():
@@ -152,6 +154,7 @@ def show_difficulty_select():
                     return "Medium"
                 else:
                     return "Hard"
+
 
 # Lancement de la partie
 if __name__ == "__main__":
