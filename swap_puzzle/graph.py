@@ -89,24 +89,78 @@ class Graph:
 
         Parameters:
         -----------
-        src: NodeType
+        src: Grid
             The source node.
-        dst: NodeType
+        dst: Grid
             The destination node.
 
         Output:
         -------
-        path: list[NodeType] | None
+        path: list[tuple] | None
             The shortest path from src to dst. Returns None if dst is not reachable from src
         """
-        graph = self.graph
 
         # Initialisation
-        queue = [src] 
+        graph = self.graph
+        queue = [src]
         father = {}
         found_path = False
 
-        #On détermine un chemin reliant src et dst
+        # On détermine un chemin reliant src et dst
+        for node in queue:
+            father[node.hash()] = None
+
+        while queue and not found_path:
+            current = queue.pop(0)
+            if current.hash() == dst.hash():
+                found_path = True  # permet de sortir de la boucle while
+
+            else:
+                neighbors = graph[current.hash()]  # liste des voisins de current
+
+                for neighbor in neighbors:
+
+                    # On vérifie que neighbor n'a pas déjà été traité (i.e. visité ou ajouté à la file)
+                    if (neighbor.hash() not in father) and (neighbor not in queue):
+                        queue.append(neighbor)
+                        father[neighbor.hash()] = current
+
+        # On vérifie qu'un chemin entre src et dst a bien été trouvé
+        if not found_path:
+            return None
+
+        # Construction du chemin reliant src et dst à partir du dico father
+        child = dst
+        chemin = []
+        while child:
+            chemin = [child.hash()] + chemin
+            child = father[child.hash()]
+
+        return chemin
+
+    def bfs_improved(self, src, dst):
+        """
+        Finds a shortest path from src to dst by BFS.
+
+        Parameters:
+        -----------
+        src: Grid
+            The source node.
+        dst: Grid
+            The destination node.
+
+        Output:
+        -------
+        path: list[tuple] | None
+            The shortest path from src to dst. Returns None if dst is not reachable from src
+        """
+
+        # Initialisation
+        queue = [src]
+        father = {}
+        found_path = False
+
+        # On détermine un chemin reliant src et dst
         for node in queue:
             father[node.hash()] = None
 
@@ -116,25 +170,21 @@ class Graph:
                 found_path = True
 
             else:
-                neighbors = graph[current.hash()]
-                for neighbor in neighbors:
-                    considered = False
-                    for visited in father:
-                        if neighbor.hash() == visited:
-                            considered = True
-                    for inqueue in queue:
-                        if neighbor.hash() == inqueue.hash():
-                            considered = True
-                    if considered == False:
+                matrice_neighbors = current.neighbors()
+                for matrice_neighbor in matrice_neighbors:
+                    # Construction de la grid voisine à current
+                    neighbor = Grid(src.m, src.n, matrice_neighbor)
+
+                    # On vérifie que neighbor n'a pas déjà été traité (i.e. visité ou ajouté à la file)
+                    if (neighbor.hash() not in father) and (neighbor not in queue):
                         queue.append(neighbor)
                         father[neighbor.hash()] = current
-
 
         # On vérifie qu'un chemin entre src et dst a bien été trouvé
         if not found_path:
             return None
 
-        # Optimisation du chemin reliant src et dst à partir de visited.
+        # Construction du chemin reliant src et dst à partir du dico father
         child = dst
         chemin = []
         while child:
@@ -148,6 +198,7 @@ class Graph:
         open_list = [(src, 0, src.manhattan_dist(dst), [])]  # içi la liste source n'a pas de père.
         closed_list = []
         path = []
+        # On lance une première fois l'algorithme afin d'éviter une erreur au niveau de if neighbor != open_list[0][3].state:
         if src.state != dst.state:
             closed_list.append(open_list[0])
             neighbors = open_list[0][0].neighbors()
@@ -172,8 +223,6 @@ class Graph:
             else:
                 icl = False  # icl pour in closed list.
                 for i in range(0, len(closed_list)): 
-                    if closed_list:
-                        break
                     if closed_list[i][0].state == open_list[0][0].state:
                         icl = True
                         if closed_list[i][2] > open_list[0][2]:  # Si  l'heuristique du noeud déjà visité est meilleure alors on le remplace  dans la liste afin d'obtenir le meilleur père possible. 
@@ -191,6 +240,10 @@ class Graph:
                     neighbors = open_list[0][0].neighbors()
                     for neighbor in neighbors:
                          if neighbor != open_list[0][3].state: 
+                            """
+                            On n' implémente pas le père de la grille comme un fils afin d'éviter une boucle infinie
+                            pour les petites grilles dans la création du chemin vers destination 
+                            """
                             open_list.append((Grid(src.m, src.n, neighbor), open_list[0][1]+1, open_list[0][1]+1+Grid(src.m, src.n, neighbor).manhattan_dist(dst), open_list[0][0]))
                     open_list.pop(0)
                     open_list.sort(key=lambda x: x[2])
