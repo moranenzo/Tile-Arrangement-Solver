@@ -18,17 +18,21 @@
 
 <h2>Project Structure</h2>
 <pre>
-PY-Tile-Arrangement-Solver/
-├── src/                         # Contains the main source code
-│   ├── grid.py                  # Grid class for tile manipulations
-│   ├── solver.py                # Solver class implementing BFS, Improved BFS, and A*
-│   ├── graph.py                 # Graph class for BFS and A*
-│   └── main.py                  # Main script to execute the solver and visualize results
-│
+PY-Tile-Arrangement-Solver/  
+├── docs/                        # Project documentation
+│   ├── API.md                   # API documentation of classes and methods
+│   └── report.md                # Detailed report on algorithms and complexity analysis
+│  
 ├── input/                       # Test input files for different grid configurations
 │   ├── grid0.in
 │   ├── grid1.in
 │   └── ...                      # Additional test files
+│
+├── src/                         # Contains the main source code
+│   ├── game.py
+│   ├── graph.py                 # Graph class for BFS and A*
+│   ├── grid.py                  # Grid class for tile manipulations
+│   └── solver.py                # Solver class implementing BFS, Improved BFS, and A*
 │
 ├── tests/                       # Unit tests for each module
 │   ├── test_A_star.py           # Tests for A*
@@ -37,11 +41,9 @@ PY-Tile-Arrangement-Solver/
 │   ├── test_is_sorted.py        # Tests for Solver algorithms
 │   └── test_swap.py             # Tests for Graph functions
 │
-├── docs/                        # Project documentation
-│   ├── report.md                # Detailed report on algorithms and complexity analysis
-│   └── API.md                   # API documentation of classes and methods
-│
-└── README.md                    # Project overview and instructions (this file)
+├── main.py                      # Main script to execute the solver and visualize results
+├── README.md                    # Project overview and instructions (this file)
+└── requirements.txt             # Python packages necessary for the proper functioning of the project.
 </pre>
 
 <h2>Algorithms</h2>
