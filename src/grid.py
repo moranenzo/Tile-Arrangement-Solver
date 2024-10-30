@@ -181,7 +181,7 @@ class Grid:
             self.state[cell1[0]][cell1[1]]
         )
 
-    def swap_sequence(self, cell_pairs):
+    def swap_seq(self, cell_pairs):
         """
         Performs a sequence of swaps on the grid.
 
