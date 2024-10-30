@@ -1,16 +1,23 @@
-# This will work if ran from the root folder ensae-prog24
-import sys 
+# This test should be run from the root folder (e.g., ensae-prog24)
+import sys
 sys.path.append("src/")
 
-import unittest 
+import unittest
 from grid import Grid
 
-class Test_GridLoading(unittest.TestCase):
+class TestGridLoading(unittest.TestCase):
+    """
+    Unit test for loading grids from file.
+    """
+
     def test_grid1(self):
-        g = Grid.grid_from_file("input/grid1.in")
-        self.assertEqual(g.m, 4)
-        self.assertEqual(g.n, 2)
-        self.assertEqual(g.state, [[1, 2], [3, 4], [5, 6], [8, 7]])
+        """
+        Tests loading grid dimensions and state from 'input/grid1.in'.
+        """
+        grid = Grid.grid_from_file("input/grid1.in")
+        self.assertEqual(grid.m, 4)
+        self.assertEqual(grid.n, 2)
+        self.assertEqual(grid.state, [[1, 2], [3, 4], [5, 6], [8, 7]])
 
 if __name__ == '__main__':
     unittest.main()
