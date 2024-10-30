@@ -1,20 +1,30 @@
-# This will work if ran from the root folder ensae-prog24
-import sys 
+# This test should be run from the root folder (e.g., ensae-prog24)
+import sys
 sys.path.append("src/")
 
-import unittest 
+import unittest
 from grid import Grid
 
-class Test_Swap(unittest.TestCase):
-    def test_grid1(self):
-        grid = Grid.grid_from_file("input/grid1.in")
-        grid.swap((3,0), (3,1))
-        self.assertEqual(grid.state, [[1, 2], [3, 4], [5, 6], [7, 8]])
+class TestSwap(unittest.TestCase):
+    """
+    Unit tests for swap operations in the Grid class.
+    """
 
-    def test_grid1_seq(self):
+    def test_single_swap(self):
+        """
+        Tests a single swap operation on a grid loaded from 'input/grid1.in'.
+        """
         grid = Grid.grid_from_file("input/grid1.in")
-        grid.swap_seq([((3,0), (3,1)), ((3,0), (3,1))])        
-        self.assertEqual(grid.state, [[1, 2], [3, 4], [5, 6], [8, 7]])
+        grid.swap((3, 0), (3, 1))
+        self.assertEqual(grid.state, [[1, 2], [3, 4], [5, 6], [7, 8]], "Grid state should match after a single swap.")
+
+    def test_swap_sequence(self):
+        """
+        Tests a sequence of swaps on a grid loaded from 'input/grid1.in'.
+        """
+        grid = Grid.grid_from_file("input/grid1.in")
+        grid.swap_seq([((3, 0), (3, 1)), ((3, 0), (3, 1))])
+        self.assertEqual(grid.state, [[1, 2], [3, 4], [5, 6], [8, 7]], "Grid state should match after swap sequence.")
 
 if __name__ == '__main__':
     unittest.main()
