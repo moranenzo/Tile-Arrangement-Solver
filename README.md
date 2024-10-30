@@ -19,27 +19,29 @@
 <h2>Project Structure</h2>
 <pre>
 PY-Tile-Arrangement-Solver/
-├── src/               # Contains the main source code
-│   ├── grid.py        # Grid class for tile manipulations
-│   ├── solver.py      # Solver class implementing BFS, Improved BFS, and A*
-│   ├── graph.py       # Graph class for BFS and A*
-│   └── main.py        # Main script to execute the solver and visualize results
+├── src/                         # Contains the main source code
+│   ├── grid.py                  # Grid class for tile manipulations
+│   ├── solver.py                # Solver class implementing BFS, Improved BFS, and A*
+│   ├── graph.py                 # Graph class for BFS and A*
+│   └── main.py                  # Main script to execute the solver and visualize results
 │
-├── input/             # Test input files for different grid configurations
+├── input/                       # Test input files for different grid configurations
 │   ├── grid0.in
 │   ├── grid1.in
-│   └── ...            # Additional test files
+│   └── ...                      # Additional test files
 │
-├── tests/             # Unit tests for each module
-│   ├── test_grid.py   # Tests for Grid functions
-│   ├── test_solver.py # Tests for Solver algorithms
-│   └── test_graph.py  # Tests for Graph functions
+├── tests/                       # Unit tests for each module
+│   ├── test_A_star.py           # Tests for A*
+│   ├── test_bfs.py              # Tests for BFS
+│   ├── test_grid_from_file.py   # Tests for Grid functions
+│   ├── test_is_sorted.py        # Tests for Solver algorithms
+│   └── test_swap.py             # Tests for Graph functions
 │
-├── docs/              # Project documentation
-│   ├── report.md      # Detailed report on algorithms and complexity analysis
-│   └── API.md         # API documentation of classes and methods
+├── docs/                        # Project documentation
+│   ├── report.md                # Detailed report on algorithms and complexity analysis
+│   └── API.md                   # API documentation of classes and methods
 │
-└── README.md          # Project overview and instructions (this file)
+└── README.md                    # Project overview and instructions (this file)
 </pre>
 
 <h2>Algorithms</h2>
