@@ -1,5 +1,5 @@
 import sys
-sys.path.append("swap_puzzle/")
+sys.path.append("src/")
 
 from grid import Grid
 from graph import Graph
