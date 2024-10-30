@@ -1,255 +1,231 @@
 """
-This is the grid module. It contains the Grid class and its associated methods.
+This module defines the Grid class, used to represent the tile arrangement puzzle grid
+and its associated methods.
 """
+
 import random
 import numpy as np
 from copy import deepcopy
 import matplotlib.pyplot as plt
-from itertools import permutations  # we are going to use this feature in the function generate to create all the grids
+from itertools import permutations
 
 
-class Grid():
+class Grid:
     """
-    A class representing the grid from the swap puzzle. It supports rectangular grids.
+    Represents a grid for the tile swap puzzle, supporting any rectangular dimensions.
 
     Attributes:
     -----------
-    m: int
-        Number of lines in the grid
-    n: int
-        Number of columns in the grid
-    state: list[list[int]]
-        The state of the grid, a list of list such that state[i][j] is the number in the cell (i, j), i.e., in the i-th line and j-th column.
-        Note: lines are numbered 0..m and columns are numbered 0..n.
+    m : int
+        Number of rows in the grid.
+    n : int
+        Number of columns in the grid.
+    state : list[list[int]]
+        Current grid state as a list of lists, where state[i][j] contains the value at row i, column j.
+        Rows are indexed from 0 to m-1 and columns from 0 to n-1.
     """
 
-    def __init__(self, m, n, initial_state=[]):
+    def __init__(self, m, n, initial_state=None):
         """
-        Initializes the grid.
+        Initializes the grid with dimensions m x n. By default, creates a sorted grid.
 
         Parameters:
         -----------
-        m: int
-            Number of lines in the grid
-        n: int
-            Number of columns in the grid
-        initial_state: list[list[int]]
-            The initial state of the grid. Default is empty (then the grid is created sorted).
+        m : int
+            Number of rows in the grid.
+        n : int
+            Number of columns in the grid.
+        initial_state : list[list[int]], optional
+            Initial configuration of the grid. If not provided, a sorted grid is generated.
         """
         self.m = m
         self.n = n
-        if not initial_state:
-            initial_state = [list(range(i*n+1, (i+1)*n+1)) for i in range(m)]
+        if initial_state is None:
+            initial_state = [list(range(i * n + 1, (i + 1) * n + 1)) for i in range(m)]
         self.state = initial_state
 
     def __str__(self):
         """
-        Prints the state of the grid as text.
+        Returns the grid state as a formatted string.
         """
-        output = f"The grid is in the following state:\n"
-        for i in range(self.m):
-            output += f"{self.state[i]}\n"
+        output = "Current grid state:\n"
+        for row in self.state:
+            output += f"{row}\n"
         return output
 
     def __repr__(self):
         """
-        Returns a representation of the grid with number of rows and columns.
+        Returns a concise representation of the grid dimensions.
         """
-        return f"<grid.Grid: m={self.m}, n={self.n}>"
+        return f"<Grid: m={self.m}, n={self.n}>"
 
-    def graphic_repr(self):
-        matrice = self.state
-
-        matrice = np.flipud(matrice)  # Inversion de la matrice pour mettre la première ligne en haut
+    def display(self):
+        """
+        Graphically displays the grid state using Matplotlib.
+        """
+        matrix = np.flipud(np.array(self.state))
         fig, ax = plt.subplots()
 
-        ax.set_xticks(np.arange(-0.5, matrice.shape[1], 1), minor=True)
-        ax.set_yticks(np.arange(-0.5, matrice.shape[0], 1), minor=True)
+        ax.set_xticks(np.arange(-0.5, matrix.shape[1], 1), minor=True)
+        ax.set_yticks(np.arange(-0.5, matrix.shape[0], 1), minor=True)
         ax.grid(which='minor', color='black', linestyle='-', linewidth=2)
 
-        for i in range(matrice.shape[0]):
-            for j in range(matrice.shape[1]):
-                ax.text(j, i, str(matrice[i, j]), ha='center', va='center', color='black')
+        for i in range(matrix.shape[0]):
+            for j in range(matrix.shape[1]):
+                ax.text(j, i, str(matrix[i, j]), ha='center', va='center', color='black')
 
         ax.set_xticks([])
         ax.set_yticks([])
-        ax.set_title('Tableau représentant la grille')
+        ax.set_title('Grid Display')
 
         plt.show()
 
-
-    def hash(self):
+    def to_tuple(self):
         """
-        Returns the tuple associated to the list self.state
+        Converts the grid state to an immutable tuple format.
         """
-        initial_state = self.state
-        return tuple(tuple(ligne) for ligne in initial_state)
+        return tuple(tuple(row) for row in self.state)
 
-    def generate(self):
-        m = self.m
-        n = self.n
-        output = []
-        sorted = [i for i in range(1, m*n+1)]  # crée la liste des entiers de 1 à mn
-        perms = list(permutations(sorted))  # Renvoie une liste de tuple (chaque tuple est une permutation de sorted)
-        for tuple in perms:
-            temp = (tuple[n*i:n*i+n] for i in range(m))
-            possibility = Grid(m, n, temp)
-            output.append(possibility.hash())
-        print(possibility)
-        
-        return output 
+    def generate_permutations(self):
+        """
+        Generates all possible unique grid states by permutating the sorted list of numbers.
 
+        Returns:
+        --------
+        list of tuple : List of all possible unique grid configurations.
+        """
+        sorted_numbers = list(range(1, self.m * self.n + 1))
+        permutations_list = permutations(sorted_numbers)
+        return [tuple([perm[i * self.n:(i + 1) * self.n] for i in range(self.m)]) for perm in permutations_list]
 
     def neighbors(self):
-        n = self.n
-        m = self.m
-        output = []
+        """
+        Generates all neighboring grid states that are one horizontal or vertical swap away.
 
-        # Construction des grilles à un swap horizontal d'écart de self.
-        for i in range(m):
-            for j in range(n-1):
-                neighbor = deepcopy(self)  # Permet d'éliminer les effets de bords.
-                neighbor.swap((i, j), (i, j+1))
-                output.append(neighbor.state)
+        Returns:
+        --------
+        list of list : List of neighboring grid states.
+        """
+        neighbors = []
 
-        # Construction des grilles à un swap vertical d'écart de self.
-        for j in range(n):
-            for i in range(m-1):
+        # Horizontal swaps
+        for i in range(self.m):
+            for j in range(self.n - 1):
                 neighbor = deepcopy(self)
-                neighbor.swap((i, j), (i+1, j))
-                output.append(neighbor.state)
+                neighbor.swap((i, j), (i, j + 1))
+                neighbors.append(neighbor.state)
 
-        return output 
+        # Vertical swaps
+        for j in range(self.n):
+            for i in range(self.m - 1):
+                neighbor = deepcopy(self)
+                neighbor.swap((i, j), (i + 1, j))
+                neighbors.append(neighbor.state)
+
+        return neighbors
 
     def is_sorted(self):
         """
-        Checks is the current state of the grid is sorte and returns the answer as a boolean.
+        Checks if the current grid state is sorted in ascending order.
+
+        Returns:
+        --------
+        bool : True if the grid is sorted, False otherwise.
         """
-        n = self.n
-        m = self.m
-        state = self.state
-        for i in range(m):
-            for j in range(n):
-                if state[i][j] != i*n + j + 1:
+        for i in range(self.m):
+            for j in range(self.n):
+                if self.state[i][j] != i * self.n + j + 1:
                     return False
         return True
 
-    def authorized_swap(self, cell1, cell2):
+    def is_adjacent(self, cell1, cell2):
+        """
+        Checks if two cells are adjacent and within grid bounds.
 
-        diff_h = abs(cell1[0]-cell2[0])
-        diff_l = abs(cell1[1]-cell2[1])
+        Parameters:
+        -----------
+        cell1, cell2 : tuple[int]
+            Coordinates of the two cells as (row, column).
 
-        z = [o for o in range(0, self.n)]
-        z_2 = [k for k in range(0, self.m)]
-
-        # On vérifie que cell1 et cell2 appartiennent bien au graph.
-        if (cell1[0] not in z_2) or (cell2[0] not in z_2):
+        Returns:
+        --------
+        bool : True if cells are adjacent and valid, False otherwise.
+        """
+        if not (0 <= cell1[0] < self.m and 0 <= cell1[1] < self.n):
             return False
-        elif (cell1[1] not in z) or (cell2[1] not in z):
+        if not (0 <= cell2[0] < self.m and 0 <= cell2[1] < self.n):
             return False
 
-        # On vérifie que les cases sont bien adjacentes.
-        elif (diff_h == 1 and diff_l == 0) or (diff_h == 0 and diff_l == 1):
-            return True
-
+        row_diff = abs(cell1[0] - cell2[0])
+        col_diff = abs(cell1[1] - cell2[1])
+        return (row_diff == 1 and col_diff == 0) or (row_diff == 0 and col_diff == 1)
 
     def swap(self, cell1, cell2):
         """
-        Implements the swap operation between two cells. Raises an exception if the swap is not
-        allowed.
+        Swaps two cells in the grid if the swap is allowed.
 
         Parameters:
         -----------
-        cell1, cell2: tuple[int]
-            The two cells to swap. They must be in the format (i, j) where i is the line and j the
-            column number of the cell.
+        cell1, cell2 : tuple[int]
+            Coordinates of the two cells as (row, column).
+
+        Raises:
+        -------
+        ValueError : If the cells are not adjacent or within grid bounds.
         """
-       
-        if not self.authorized_swap(cell1, cell2):
-            raise Exception("Sorry, this cells can not be swapped")
+        if not self.is_adjacent(cell1, cell2):
+            raise ValueError("The specified cells cannot be swapped.")
 
-        else:
-            v1 = self.state[cell1[0]][cell1[1]]
-            v2 = self.state[cell2[0]][cell2[1]]
-            self.state[cell1[0]][cell1[1]], self.state[cell2[0]][cell2[1]] = v2, v1
+        self.state[cell1[0]][cell1[1]], self.state[cell2[0]][cell2[1]] = (
+            self.state[cell2[0]][cell2[1]],
+            self.state[cell1[0]][cell1[1]]
+        )
 
-    def swap_seq(self, cell_pair_list):
-        
-        for tuple in cell_pair_list:
-            self.swap(tuple[0], tuple[1])
-    def manhattan_dist(self, dst):
-
+    def swap_sequence(self, cell_pairs):
         """
-        Calcule la distance de Manhattan entre deux matrices.
+        Performs a sequence of swaps on the grid.
+
+        Parameters:
+        -----------
+        cell_pairs : list[tuple]
+            List of tuples representing pairs of cells to swap.
+        """
+        for cell1, cell2 in cell_pairs:
+            self.swap(cell1, cell2)
+
+    def manhattan_distance(self, other):
+        """
+        Calculates the Manhattan distance between two grid states.
+
+        Parameters:
+        -----------
+        other : Grid
+            The target grid state.
+
+        Returns:
+        --------
+        int : Manhattan distance between the current and target grid states.
         """
         distance = 0
-        for i in range(len(self.m)):
+        for i in range(self.m):
             for j in range(self.n):
-                distance += abs(self.state[i][j] - dst.state[i][j])
+                distance += abs(self.state[i][j] - other.state[i][j])
+        return distance
 
-        return distance 
-    
-    def accurate_dist(self, dst, graph):
-        """ arguments : self : grid
-                        grid : grid
-                        graph : graph
+    def from_file(cls, file_name):
         """
-        if self.state == dst.state:
-            return 0
-
-        neighbors = graph.graph[tuple(self.state)]  # Sélection de tous les voisins de self.
-
-        if dst in neighbors:
-            return 1
-        else:
-            m, n = self.m, self.n
-
-            closest_node = Grid(m, n, neighbors[0])  # Neighbor[0]:tuple on le transforme en grid pour pouvoir réutiliser accurate_dist.
-            dist_min = closest_node.accurate_dist(dst, graph)
-
-            for neighbor in neighbors:
-                current_grid = Grid(m, n, neighbor)
-                current_dist = current_grid.accurate_dist(dst, graph)
-
-                if current_dist < dist_min:
-                    closest_node = current_grid
-
-            return 1 + dist_min
-
-    def rough_dist(self, grid, graph):
-        """ arguments : self : grid
-                        grid : grid
-                        graph : graph (inutile mais permet d'avoir les mêmes arguments que accurate_dist)
-        """
-        return sum([self.state[i][j] != grid.state[i][j] for i in range(self.m) for j in range(self.n)])
-    
-
-
-    @classmethod
-    def grid_from_file(cls, file_name):
-        """
-        Creates a grid object from class Grid, initialized with the information from the file
-        file_name.
+        Loads a grid from a specified file.
 
         Parameters:
         -----------
-        file_name: str
-            Name of the file to load. The file must be of the format:
-            - first line contains "m n"
-            - next m lines contain n integers that represent the state of the corresponding cell
+        file_name : str
+            Path to the file containing grid data.
 
-        Output:
-        -------
-        grid: Grid
-            The grid
+        Returns:
+        --------
+        Grid : Grid initialized with the file data.
         """
         with open(file_name, "r") as file:
             m, n = map(int, file.readline().split())
-            initial_state = [[] for i_line in range(m)]
-            for i_line in range(m):
-                line_state = list(map(int, file.readline().split()))
-                if len(line_state) != n:
-                    raise Exception("Format incorrect")
-                initial_state[i_line] = line_state
-            grid = Grid(m, n, initial_state)
-        return grid
+            state = [list(map(int, file.readline().split())) for _ in range(m)]
+            return cls(m, n, state)
