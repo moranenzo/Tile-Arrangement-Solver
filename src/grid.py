@@ -86,7 +86,7 @@ class Grid:
         """
         return tuple(tuple(row) for row in self.state)
 
-    def generate_permutations(self):
+    def generate(self):
         """
         Generates all possible unique grid states by permutating the sorted list of numbers.
 
