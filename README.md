@@ -37,11 +37,13 @@ PY-Tile-Arrangement-Solver/
 ├── tests/                       # Unit tests for each module
 │   ├── test_A_star.py           # Tests for A*
 │   ├── test_bfs.py              # Tests for BFS
+│   ├── test_bfs_improved.py     # Tests for Improved BFS
 │   ├── test_grid_from_file.py   # Tests for Grid functions
-│   ├── test_is_sorted.py        # Tests for Solver algorithms
-│   └── test_swap.py             # Tests for Graph functions
+│   ├── test_is_sorted.py        # Tests for sorted state detection
+│   └── test_swap.py             # Tests for swap operations in the grid
 │
-├── main.py                      # Main script to execute the solver and visualize results
+├── main.py                      # Script to run algorithms for solving and testing solutions
+├── run_game.py                  # Main script to launch the interactive game
 ├── README.md                    # Project overview and instructions (this file)
 └── requirements.txt             # Python packages necessary for the proper functioning of the project.
 </pre>
@@ -80,9 +82,15 @@ PY-Tile-Arrangement-Solver/
 </ol>
 
 <h2>Usage</h2>
-<p>To execute the main script:</p>
-<pre><code>python src/main.py</code></pre>
-<p>The script loads an input grid, applies the chosen solving algorithm, and displays the result in a Pygame window. The user can either manually solve the puzzle or observe the automatic solution.</p>
+<h3>Run the Interactive Game</h3>
+<p>To start the interactive puzzle game with a graphical interface:</p>
+<pre><code>python run_game.py</code></pre>
+<p>This will launch the game interface where you can choose a difficulty level and interact with the puzzle.</p>
+
+<h3>Run the Solver Algorithms</h3>
+<p>To execute the script focused on algorithm testing and pathfinding solutions:</p>
+<pre><code>python main.py</code></pre>
+<p>This script loads a grid from an input file, applies different solving algorithms (BFS, Improved BFS, A*), and displays the paths found for each algorithm in the console.</p>
 
 <h2>Testing</h2>
 <p>Run unit tests for each module with:</p>
