@@ -1,4 +1,3 @@
-# This test should be run from the root folder (e.g., ensae-prog24)
 import sys
 sys.path.append("src/")
 
