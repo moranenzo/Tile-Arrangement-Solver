@@ -1,2 +1,3 @@
-pygame==2.0.1
-numpy==1.19.5
+pygame==2.1.0          # Utilisé dans game.py et run_game.py pour l'interface graphique
+numpy==1.21.2          # Utilisé dans grid.py pour la manipulation des matrices et des distances
+matplotlib==3.4.3      # Utilisé dans grid.py pour les représentations graphiques de la grille
