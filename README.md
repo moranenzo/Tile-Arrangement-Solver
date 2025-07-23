@@ -1,7 +1,7 @@
-<h1>PY-Tile-Arrangement-Solver</h1>
+<h1>Tile-Arrangement-Solver</h1>
 
 <h2>Overview</h2>
-<p>PY-Tile-Arrangement-Solver is a Python project designed to solve a tile rearrangement puzzle on a grid of dimensions <code>m x n</code>. The objective is to find the shortest sequence of moves to arrange tiles in a specified order, with the final arrangement showing sequential numbers across each row. This project implements multiple graph traversal algorithms, including BFS, an improved BFS, and A*, to optimize the solution. A graphical interface created with Pygame allows users to interact with the puzzle and experiment with different configurations.</p>
+<p>Tile-Arrangement-Solver is a Python project designed to solve a tile rearrangement puzzle on a grid of dimensions <code>m x n</code>. The objective is to find the shortest sequence of moves to arrange tiles in a specified order, with the final arrangement showing sequential numbers across each row. This project implements multiple graph traversal algorithms, including BFS, an improved BFS, and A*, to optimize the solution. A graphical interface created with Pygame allows users to interact with the puzzle and experiment with different configurations.</p>
 
 <h2>Features</h2>
 <ul>
@@ -18,7 +18,7 @@
 
 <h2>Project Structure</h2>
 <pre>
-PY-Tile-Arrangement-Solver/  
+Tile-Arrangement-Solver/  
 ├── docs/                        # Project documentation
 │   ├── API.md                   # API documentation of classes and methods
 │   └── report.md                # Detailed report on algorithms and complexity analysis
@@ -71,10 +71,10 @@ PY-Tile-Arrangement-Solver/
 <h2>Installation</h2>
 <ol>
   <li>Clone the repository:
-    <pre><code>git clone https://github.com/moranenzo/PY-Tile-Arrangement-Solver.git</code></pre>
+    <pre><code>git clone https://github.com/moranenzo/Tile-Arrangement-Solver.git</code></pre>
   </li>
   <li>Navigate to the project directory:
-    <pre><code>cd PY-Tile-Arrangement-Solver</code></pre>
+    <pre><code>cd Tile-Arrangement-Solver</code></pre>
   </li>
   <li>Install the required dependencies:
     <pre><code>pip install -r requirements.txt</code></pre>
